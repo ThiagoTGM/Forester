@@ -39,8 +39,8 @@
     </developers>
 
     <scm>
-        <connection>scm:git:https://github.com/ThiagoTGM/Forester</connection>
-        <developerConnection>scm:git:ssh://github.com/ThiagoTGM/Forester</developerConnection>
+        <connection>scm:git:https://github.com/ThiagoTGM/Forester.git</connection>
+        <developerConnection>scm:git:ssh://github.com/ThiagoTGM/Forester.git</developerConnection>
         <tag>HEAD</tag>
         <url>https://github.com/ThiagoTGM/Forester</url>
     </scm>
