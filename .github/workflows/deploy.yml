@@ -1,9 +1,15 @@
-# Workflow for deploying a release manually
+# Workflow for deploying a release to GitHub Packages and OSSRH
 
 name: Deploy
 
-# Trigger workflow manually
-on: workflow_dispatch
+
+on:
+  workflow_dispatch: # Trigger workflow manually
+  push:
+    tags: # Trigger on release tags
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+  schedule: # Trigger once a day (nightly builds)
+    - cron: '0 0 * * *'
 
 jobs:
   release:
@@ -12,8 +18,15 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Check out Git repository
+      - name: Check out Git repository (Release/Manual)
         uses: actions/checkout@v2
+        if: github.event_name != 'schedule'
+      
+      - name: Check out Git repository (Nightly)
+        uses: actions/checkout@v2
+        with:
+          ref: 'develop' # Nightly pulls from develop
+        if: github.event_name == 'schedule'
 
       - name: Install Java and Maven
         uses: actions/setup-java@v1
