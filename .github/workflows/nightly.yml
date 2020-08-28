@@ -18,10 +18,35 @@ jobs:
         with:
           ref: 'develop' # Nightly pulls from develop
 
-      - name: Deploy
-        uses: ./.github/actions/deploy
+      - name: Install Java and Maven
+        uses: actions/setup-java@v1
         with:
-          gpg_private_key: ${{ secrets.gpg_private_key }}
-          gpg_passphrase: ${{ secrets.gpg_passphrase }}
-          nexus_username: ${{ secrets.nexus_username }}
-          nexus_password: ${{ secrets.nexus_password }}
+          java-version: 11
+          gpg-private-key: ${{ secrets.gpg_private_key }} # Value of the GPG private key to import
+          gpg-passphrase: GPG_PASSPHRASE # env variable for GPG private key passphrase
+          
+      - name: Build and test with Maven
+        run: mvn clean test package -B -P deploy
+
+      - name: Publish to GitHub Packages
+        run: mvn deploy -B -P deploy,github,skip-tests
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ github.token }} 
+          GPG_PASSPHRASE: ${{ secrets.gpg_passphrase }}
+
+      - name: Set up Apache Maven Central
+        uses: actions/setup-java@v1
+        with: # running setup-java again overwrites the settings.xml
+          java-version: 11
+          server-id: ossrh # Value of the distributionManagement/repository/id field of the pom.xml
+          server-username: NEXUS_USERNAME # env variable for username in deploy
+          server-password: NEXUS_PASSWORD # env variable for token in deploy
+          gpg-passphrase: GPG_PASSPHRASE # env variable for GPG private key passphrase
+
+      - name: Publish to OSSRH
+        run: mvn deploy -B -P deploy,ossrh,skip-tests
+        env:
+          NEXUS_USERNAME: ${{ secrets.nexus_username }}
+          NEXUS_PASSWORD: ${{ secrets.nexus_password }}
+          GPG_PASSPHRASE: ${{ secrets.gpg_passphrase }}
