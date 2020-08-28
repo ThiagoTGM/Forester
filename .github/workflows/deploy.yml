@@ -1,0 +1,27 @@
+# Workflow for deploying a release to GitHub Packages and OSSRH
+
+name: Deploy
+
+on:
+  workflow_dispatch: # Trigger workflow manually
+  push:
+    tags: # Trigger on release tags
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  release:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Deploy
+        uses: ./.github/actions/deploy
+        with:
+          gpg_private_key: ${{ secrets.gpg_private_key }}
+          gpg_passphrase: ${{ secrets.gpg_passphrase }}
+          nexus_username: ${{ secrets.nexus_username }}
+          nexus_password: ${{ secrets.nexus_password }}
