@@ -27,6 +27,8 @@ jobs:
           
       - name: Build and test with Maven
         run: mvn clean verify -B -P deploy
+        env:
+          GPG_PASSPHRASE: ${{ secrets.gpg_passphrase }}
 
       - name: Publish to GitHub Packages
         run: mvn deploy -B -P deploy,github -Dmaven.test.skip=true
