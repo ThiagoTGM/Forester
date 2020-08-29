@@ -56,5 +56,5 @@ jobs:
       - name: Publish site to GitHub Pages
         run: mvn site -B -P github
         env:
-          GITHUB_ACTOR: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_ACTOR: ThiagoTGM # Who will show up as committer
+          GITHUB_TOKEN: ${{ secrets.gh_user_token }}
