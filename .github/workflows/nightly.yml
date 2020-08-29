@@ -13,7 +13,7 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Check out Git repository (Nightly)
+      - name: Check out Git repository (Develop)
         uses: actions/checkout@v2
         with:
           ref: 'develop' # Nightly pulls from develop
@@ -26,10 +26,10 @@ jobs:
           gpg-passphrase: GPG_PASSPHRASE # env variable for GPG private key passphrase
           
       - name: Build and test with Maven
-        run: mvn clean test package -B -P deploy
+        run: mvn clean verify -B -P deploy
 
       - name: Publish to GitHub Packages
-        run: mvn deploy -B -P deploy,github,skip-tests
+        run: mvn deploy -B -P deploy,github -Dmaven.test.skip=true
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ github.token }} 
@@ -45,7 +45,7 @@ jobs:
           gpg-passphrase: GPG_PASSPHRASE # env variable for GPG private key passphrase
 
       - name: Publish to OSSRH
-        run: mvn deploy -B -P deploy,ossrh,skip-tests
+        run: mvn deploy -B -P deploy,ossrh -Dmaven.test.skip=true
         env:
           NEXUS_USERNAME: ${{ secrets.nexus_username }}
           NEXUS_PASSWORD: ${{ secrets.nexus_password }}
