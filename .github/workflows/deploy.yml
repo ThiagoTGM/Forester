@@ -6,7 +6,7 @@ on:
   workflow_dispatch: # Trigger workflow manually
   push:
     tags: # Trigger on release tags
-      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
 
 jobs:
   release:
