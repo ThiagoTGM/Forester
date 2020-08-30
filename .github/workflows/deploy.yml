@@ -54,7 +54,7 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.gpg_passphrase }}
 
       - name: Publish site to GitHub Pages
-        if: ( github.event_name == 'push' && !endsWith( github.ref, '-SUPPORT' ) ) || ( github.event_name == 'workflow_dispatch' && github.ref == 'ref/head/master' ) # Don't publish support versions or non-prod builds
+        if: ( github.event_name == 'push' && !endsWith( github.ref, '-SUPPORT' ) ) || ( github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/master' ) # Don't publish support versions or non-prod builds
         run: mvn site -B -P github
         env:
           GITHUB_ACTOR: ThiagoTGM # Who will show up as committer
