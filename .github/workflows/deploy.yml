@@ -10,12 +10,11 @@ on:
 
 jobs:
   release:
-    # The type of runner that the job will run on
+    name: Deploy Release
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Check out Git repository
+      - name: Check out main Git repository
         uses: actions/checkout@v2
 
       - name: Set up Apache Maven Central
@@ -53,9 +52,58 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }} 
           GPG_PASSPHRASE: ${{ secrets.gpg_passphrase }}
 
-      - name: Publish site to GitHub Pages
-        if: ( github.event_name == 'push' && !endsWith( github.ref, '-SUPPORT' ) ) || ( github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/master' ) # Don't publish support versions or non-prod builds
-        run: mvn site -B -P github
-        env:
-          GITHUB_ACTOR: ThiagoTGM # Who will show up as committer
-          GITHUB_TOKEN: ${{ secrets.gh_user_token }}
+      - name: Build project site
+        run: mvn site -B
+
+      - name: Tarball project site
+        run: tar -czf site.tar.gz -C target/site .
+
+      - name: Upload site artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: site
+          path: site.tar.gz
+
+  site:
+    name: Update Site
+    needs: release
+    runs-on: ubuntu-latest
+    if: ( github.event_name == 'push' && !endsWith( github.ref, '-SUPPORT' ) ) || ( github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/master' ) # Don't publish support versions or non-prod builds
+
+    steps:
+      - name: Check out GH Pages branch
+        uses: actions/checkout@v2
+        with:
+          ref: gh-pages # Github Pages branch
+
+      - name: Delete existing site files
+        run: rm -r *
+
+      - name: Download site artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: site
+
+      - name: Unpack the artifact
+        run: tar -xzf site.tar.gz
+
+      - name: Delete the artifact
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          name: site
+
+      - name: Delete the (local) artifact
+        run: rm site.tar.gz
+
+      - name: Configure git commiter identity
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+      - name: Commit new files
+        run: |
+          git add -A
+          git commit -m "Updated project site to ${{ github.ref }}"
+
+      - name: Push changes
+        run: git push origin gh-pages
