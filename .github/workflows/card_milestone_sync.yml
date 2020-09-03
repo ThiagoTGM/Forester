@@ -1,4 +1,4 @@
-# Workflow for syncing milestones to version projects
+# Workflow for setting milestones to issues when they're added to version projects
 
 name: Card Milestone Sync
 
@@ -27,7 +27,7 @@ jobs:
           python-version: 3.8
       - name: Install dependencies
         run: python -m pip install requests
-      - name: Fetch scripts # Don't need whole repository, just this file
+      - name: Fetch scripts # Don't need whole repository, just these files
         run: |
           wget https://github.com/${{ github.repository }}/raw/master/.github/scripts/get_project_name.py
           wget https://github.com/${{ github.repository }}/raw/master/.github/scripts/get_milestone_number.py
