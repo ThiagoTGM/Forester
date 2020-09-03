@@ -6,13 +6,12 @@ on:
   workflow_dispatch: # Trigger workflow manually
   push:
     tags: # Trigger on release tags
-      - 'v[0-9]+.[0-9]+.[0-9]+*'
+      - 'v*'
 
 jobs:
-  release:
-    name: Deploy Release
+  deploy:
+    name: Deploy Version
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out main Git repository
         uses: actions/checkout@v2
@@ -52,6 +51,12 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }} 
           GPG_PASSPHRASE: ${{ secrets.gpg_passphrase }}
 
+      - name: Upload release artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: release
+          path: target/*.jar
+
       - name: Build project site
         run: mvn site -B
 
@@ -64,12 +69,54 @@ jobs:
           name: site
           path: site.tar.gz
 
+  release:
+    name: Publish Release
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && !endsWith( github.ref, '-SUPPORT' ) # Only on non-support tags
+    steps:
+      - name: Get tag name
+        id: get_name
+        run: echo "::set-output name=name::${GITHUB_REF##*/}"
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Download release artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: release
+          path: target
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ steps.get_name.outputs.name }}
+          body_path: release_notes.md
+          draft: true
+          prerelease: false
+      - name: Upload artifact to release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: hub release edit $(find target -type f -name "*" -printf "-a %p ") -m "" "${{ steps.get_name.outputs.name }}"
+      - name: Publish release
+        uses: eregon/publish-release@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          release_id: ${{ steps.create_release.outputs.id }}
+      - name: Delete the artifact
+        if: always()
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          name: release
+
   site:
     name: Update Site
-    needs: release
+    needs: deploy
     runs-on: ubuntu-latest
     if: ( github.event_name == 'push' && !endsWith( github.ref, '-SUPPORT' ) ) || ( github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/master' ) # Don't publish support versions or non-prod builds
-
     steps:
       - name: Check out GH Pages branch
         uses: actions/checkout@v2
@@ -87,11 +134,6 @@ jobs:
       - name: Unpack the artifact
         run: tar -xzf site.tar.gz
 
-      - name: Delete the artifact
-        uses: geekyeggo/delete-artifact@v1
-        with:
-          name: site
-
       - name: Delete the (local) artifact
         run: rm site.tar.gz
 
@@ -107,3 +149,9 @@ jobs:
 
       - name: Push changes
         run: git push origin gh-pages
+
+      - name: Delete the artifact
+        if: always()
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          name: site
