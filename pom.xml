@@ -125,6 +125,8 @@
                 <artifactId>gitflow-maven-plugin</artifactId>
                 <version>1.14.0</version>
                 <configuration>
+                    <skipTestProject>false</skipTestProject> <!-- Run unit tests as a sanity check -->
+                    <digitsOnlyDevVersion>true</digitsOnlyDevVersion>
                     <gitFlowConfig>
                         <productionBranch>master</productionBranch>
                         <developmentBranch>develop</developmentBranch>
