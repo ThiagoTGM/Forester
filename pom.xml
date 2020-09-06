@@ -52,11 +52,18 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.release>11</maven.compiler.release>
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
+            <version>3.6.1</version>
+        </dependency>
+
+        <!-- Testing dependencies -->
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -86,7 +93,7 @@
 
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.0</version>
+                    <version>3.8.1</version>
                 </plugin>
 
                 <plugin>
@@ -349,6 +356,112 @@
                     <url>https://maven.pkg.github.com/ThiagoTGM/Forester</url>
                 </repository>
             </distributionManagement>
+        </profile>
+        
+        <!-- Stricter compiler checking -->
+        <!-- NOTE: Project must be compiled and packaged normally first as the compiled classes in the jar are used by some of the checkers -->
+        <profile>
+            <id>lint</id>
+            <dependencies>
+            
+                <!-- Add previously compiled classes for extra checker functionality -->
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>${project.artifactId}-compiled</artifactId>
+                    <version>${project.version}</version>
+                    <scope>system</scope>
+                    <systemPath>${project.build.directory}/${project.build.finalName}.jar</systemPath>
+                </dependency>
+
+            </dependencies>
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <executions>
+                            
+                            <!-- Remove compiled classes to ensure recompilation -->
+                            <execution>
+                                <id>clean-classes</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>clean</goal>
+                                </goals>
+                            </execution>
+                            
+                        </executions>
+                        <configuration>
+                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                            <filesets>
+                            
+                                <fileset>
+                                    <directory>target</directory>
+                                    <includes>
+                                    
+                                        <include>**</include>
+                                        
+                                    </includes>
+                                    <excludes>
+                                    
+                                        <!-- Keep the packaged jar for checker use -->
+                                        <exclude>${project.build.finalName}.jar</exclude>
+                                        
+                                    </excludes>
+                                </fileset>
+                                
+                            </filesets>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <fork>true</fork> <!-- Must fork or else JVM arguments are ignored. -->
+                            <compilerArguments>
+                                <Xmaxerrs>10000</Xmaxerrs>
+                                <Xmaxwarns>10000</Xmaxwarns>
+                            </compilerArguments>
+                            <!-- Without showWarnings and verbose, maven-compiler-plugin may not show output. -->
+                            <showWarnings>true</showWarnings>
+                            <!-- <verbose>true</verbose> -->
+                            <annotationProcessorPaths>
+
+                                <path>
+                                    <groupId>org.checkerframework</groupId>
+                                    <artifactId>checker</artifactId>
+                                    <version>3.6.1</version>
+                                </path>
+
+                            </annotationProcessorPaths>
+                            <annotationProcessors>
+                                <!-- Enabled checkers -->
+                                <!-- See checker list at https://checkerframework.org/manual -->
+                                <annotationProcessor>org.checkerframework.checker.nullness.NullnessChecker</annotationProcessor>
+                                <annotationProcessor>org.checkerframework.checker.optional.OptionalChecker</annotationProcessor>
+                                <annotationProcessor>org.checkerframework.checker.interning.InterningChecker</annotationProcessor>
+                                <annotationProcessor>org.checkerframework.checker.lock.LockChecker</annotationProcessor>
+                                <annotationProcessor>org.checkerframework.checker.index.IndexChecker</annotationProcessor>
+                                <annotationProcessor>org.checkerframework.checker.fenum.FenumChecker</annotationProcessor>
+                                <annotationProcessor>org.checkerframework.checker.tainting.TaintingChecker</annotationProcessor>
+                                <annotationProcessor>org.checkerframework.checker.regex.RegexChecker</annotationProcessor>
+                                <annotationProcessor>org.checkerframework.checker.formatter.FormatterChecker</annotationProcessor>
+                                <annotationProcessor>org.checkerframework.checker.signedness.SignednessChecker</annotationProcessor>
+                            </annotationProcessors>
+                            <compilerArgs>
+                                <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
+                                <arg>-Xlint:all,-processing,-requires-transitive-automatic,-requires-automatic</arg>
+                                <arg>-Alint=all</arg>
+                                <arg>-ANullnessChecker_lint=-redundantNullComparison</arg>
+                                <arg>-AreportEvalWarns</arg>
+                                <arg>-Werror</arg> <!-- No warnings allowed -->
+                            </compilerArgs>
+                        </configuration>
+                    </plugin>
+
+                </plugins>
+            </build>
         </profile>
 
     </profiles>
