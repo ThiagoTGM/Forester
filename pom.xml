@@ -465,21 +465,10 @@
         </profile>
         
         <!-- Stricter compiler checking -->
-        <!-- NOTE: Project must be compiled and packaged normally first as the compiled classes in the jar are used by some of the checkers -->
+        <!-- NOTE: Project must be compiled, packaged, and installed normally first 
+             as the compiled classes in the jar are used by some of the checkers -->
         <profile>
             <id>lint</id>
-            <dependencies>
-            
-                <!-- Add previously compiled classes for extra checker functionality -->
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>${project.artifactId}-compiled</artifactId>
-                    <version>${project.version}</version>
-                    <scope>system</scope>
-                    <systemPath>${project.build.directory}/${project.build.finalName}.jar</systemPath>
-                </dependency>
-
-            </dependencies>
             <build>
                 <plugins>
 
@@ -498,27 +487,6 @@
                             </execution>
 
                         </executions>
-                        <configuration>
-                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
-                            <filesets>
-
-                                <fileset>
-                                    <directory>target</directory>
-                                    <includes>
-
-                                        <include>**</include>
-
-                                    </includes>
-                                    <excludes>
-                                    
-                                        <!-- Keep the packaged jar for checker use -->
-                                        <exclude>${project.build.finalName}.jar</exclude>
-
-                                    </excludes>
-                                </fileset>
-
-                            </filesets>
-                        </configuration>
                     </plugin>
 
                     <plugin>
@@ -538,6 +506,13 @@
                                     <groupId>org.checkerframework</groupId>
                                     <artifactId>checker</artifactId>
                                     <version>${checker.version}</version>
+                                </path>
+                                
+                                <!-- Add previously compiled classes for extra checker functionality -->
+                                <path>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>${project.artifactId}</artifactId>
+                                    <version>${project.version}</version>
                                 </path>
 
                             </annotationProcessorPaths>
