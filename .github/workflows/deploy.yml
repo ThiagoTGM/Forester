@@ -15,6 +15,23 @@ jobs:
     steps:
       - name: Check out main Git repository
         uses: actions/checkout@v2
+      - name: Cache local Maven repository (new tag)
+        if: github.event_name == 'push'
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-deploy-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-deploy-
+      - name: Cache local Maven repository (manual dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-manualdeploy-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-manualdeploy-
+            ${{ runner.os }}-maven-deploy-
 
       - name: Set up Apache Maven Central
         uses: actions/setup-java@v1
@@ -25,12 +42,10 @@ jobs:
           server-password: NEXUS_PASSWORD # env variable for token in deploy
           gpg-private-key: ${{ secrets.gpg_private_key }} # Value of the GPG private key to import
           gpg-passphrase: GPG_PASSPHRASE # env variable for GPG private key passphrase
-
       - name: Build and test with Maven
         run: mvn clean verify -B -P deploy
         env:
           GPG_PASSPHRASE: ${{ secrets.gpg_passphrase }}
-
       - name: Publish to OSSRH
         run: mvn deploy -B -P deploy,ossrh -Dmaven.test.skip=true
         env:
@@ -43,7 +58,6 @@ jobs:
         with:
           java-version: 11
           gpg-passphrase: GPG_PASSPHRASE # env variable for GPG private key passphrase
-
       - name: Publish to GitHub Packages
         run: mvn deploy -B -P deploy,github -Dmaven.test.skip=true
         env:
@@ -59,10 +73,8 @@ jobs:
 
       - name: Build project site
         run: mvn site -B
-
       - name: Tarball project site
         run: tar -czf site.tar.gz -C target/site .
-
       - name: Upload site artifact
         uses: actions/upload-artifact@v2
         with:
@@ -125,15 +137,12 @@ jobs:
 
       - name: Delete existing site files
         run: rm -r *
-
       - name: Download site artifact
         uses: actions/download-artifact@v2
         with:
           name: site
-
       - name: Unpack the artifact
         run: tar -xzf site.tar.gz
-
       - name: Delete the (local) artifact
         run: rm site.tar.gz
 
@@ -141,12 +150,10 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-
       - name: Commit new files
         run: |
           git add -A
           git commit -m "Updated project site to ${{ github.ref }}"
-
       - name: Push changes
         run: git push origin gh-pages
 
