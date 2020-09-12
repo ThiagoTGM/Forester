@@ -8,10 +8,8 @@ on:
 
 jobs:
   release:
-    # The type of runner that the job will run on
+    name: Release Snapshot
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Check out Git repository (Develop)
         uses: actions/checkout@v2
@@ -27,12 +25,10 @@ jobs:
           server-password: NEXUS_PASSWORD # env variable for token in deploy
           gpg-private-key: ${{ secrets.gpg_private_key }} # Value of the GPG private key to import
           gpg-passphrase: GPG_PASSPHRASE # env variable for GPG private key passphrase
-
       - name: Build and test with Maven
         run: mvn clean verify -B -P deploy
         env:
           GPG_PASSPHRASE: ${{ secrets.gpg_passphrase }}
-
       - name: Publish to OSSRH
         run: mvn deploy -B -P deploy,ossrh -Dmaven.test.skip=true
         env:
@@ -45,7 +41,6 @@ jobs:
         with:
           java-version: 11
           gpg-passphrase: GPG_PASSPHRASE # env variable for GPG private key passphrase
-
       - name: Publish to GitHub Packages
         run: mvn deploy -B -P deploy,github -Dmaven.test.skip=true
         env:
