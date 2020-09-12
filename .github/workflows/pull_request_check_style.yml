@@ -1,6 +1,6 @@
 # Workflow for testing that the code of incoming pull requests builds and passes tests
 
-name: Linter Check
+name: Style Check
 
 on:
   pull_request:
@@ -21,7 +21,5 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Build classes
-        run: mvn clean package -B -Dmaven.test.skip=true # Just need the classes for checker use, no test necessary
-      - name: Run linter/checker
-        run: mvn compile -B -P lint,strict
+      - name: Run style checker
+        run: mvn compile -B -P style,strict

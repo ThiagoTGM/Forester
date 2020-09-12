@@ -54,11 +54,13 @@ jobs:
         with:
           java-version: 11
       - name: Build and test with Maven
-        run: mvn clean verify -B # Also packages into jar
+        run: mvn clean install -B # Also installs artifact for Checker
 
       # Run linters and style checkers
-      - name: Run linter/checker
-        run: mvn compile -B -P lint
+      - name: Run linter/static checker
+        run: mvn compile -B -P lint,strict
+      - name: Run style checks
+        run: mvn validate -B -P style,strict
 
       # Create release branch
       - name: Configure git commiter identity
