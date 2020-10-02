@@ -5,13 +5,13 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.thiagotgm</groupId>
+    <groupId>dev.sympho</groupId>
     <artifactId>forester</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <name>Forester</name>
     <description>Library for direct-mapped and hierarchical persistent storage that can be backed by a mix of database services.</description>
-    <url>https://github.com/ThiagoTGM/Forester</url>
+    <url>https://github.com/tmarback/forester</url>
 
     <licenses>
         <license>
@@ -23,7 +23,7 @@
 
     <developers>
         <developer>
-            <id>ThiagoTGM</id>
+            <id>tmarback</id>
             <name>Thiago Marback</name>
             <email>tmarback@sympho.dev</email>
             <url>https://www.github.com/tmarback</url>
@@ -36,15 +36,15 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/tmarback/Forester.git</connection>
-        <developerConnection>scm:git:ssh://github.com/tmarback/Forester.git</developerConnection>
+        <connection>scm:git:git://github.com/tmarback/forester.git</connection>
+        <developerConnection>scm:git:ssh://github.com/tmarback/forester.git</developerConnection>
         <tag>HEAD</tag>
-        <url>https://github.com/tmarback/Forester/tree/master</url>
+        <url>https://github.com/tmarback/forester/tree/master</url>
     </scm>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/tmarback/Forester/issues</url>
+        <url>https://github.com/tmarback/forester/issues</url>
     </issueManagement>
 
     <properties>
@@ -426,12 +426,12 @@
                 <snapshotRepository>
                     <id>github</id>
                     <name>GitHub Packages</name>
-                    <url>https://maven.pkg.github.com/tmarback/Forester</url>
+                    <url>https://maven.pkg.github.com/tmarback/forester</url>
                 </snapshotRepository>
                 <repository>
                     <id>github</id>
                     <name>GitHub Packages</name>
-                    <url>https://maven.pkg.github.com/tmarback/Forester</url>
+                    <url>https://maven.pkg.github.com/tmarback/forester</url>
                 </repository>
             </distributionManagement>
         </profile>
