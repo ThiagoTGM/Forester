@@ -25,29 +25,26 @@
         <developer>
             <id>ThiagoTGM</id>
             <name>Thiago Marback</name>
-            <email>thiagogmarback@gmail.com</email>
-            <url>https://www.github.com/ThiagoTGM</url>
+            <email>tmarback@sympho.dev</email>
+            <url>https://www.github.com/tmarback</url>
             <roles>
                 <role>architect</role>
                 <role>developer</role>
             </roles>
             <timezone>America/Los_Angeles</timezone>
-            <properties>
-                <discord>ThiagoTGM#1337</discord>
-            </properties>
         </developer>
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/ThiagoTGM/Forester.git</connection>
-        <developerConnection>scm:git:ssh://github.com/ThiagoTGM/Forester.git</developerConnection>
+        <connection>scm:git:git://github.com/tmarback/Forester.git</connection>
+        <developerConnection>scm:git:ssh://github.com/tmarback/Forester.git</developerConnection>
         <tag>HEAD</tag>
-        <url>https://github.com/ThiagoTGM/Forester/tree/master</url>
+        <url>https://github.com/tmarback/Forester/tree/master</url>
     </scm>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/ThiagoTGM/Forester/issues</url>
+        <url>https://github.com/tmarback/Forester/issues</url>
     </issueManagement>
 
     <properties>
@@ -80,13 +77,13 @@
         <pluginManagement>
             <plugins>
             
-				<!-- clean lifecycle -->
+                <!-- clean lifecycle -->
                 <plugin>
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>3.1.0</version>
                 </plugin>
                 
-				<!-- default lifecycle -->
+                <!-- default lifecycle -->
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>3.0.2</version>
@@ -148,7 +145,7 @@
                     <version>1.6.8</version>
                 </plugin>
                 
-				<!-- site lifecycle -->
+                <!-- site lifecycle -->
                 <plugin>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>3.7.1</version>
@@ -429,12 +426,12 @@
                 <snapshotRepository>
                     <id>github</id>
                     <name>GitHub Packages</name>
-                    <url>https://maven.pkg.github.com/ThiagoTGM/Forester</url>
+                    <url>https://maven.pkg.github.com/tmarback/Forester</url>
                 </snapshotRepository>
                 <repository>
                     <id>github</id>
                     <name>GitHub Packages</name>
-                    <url>https://maven.pkg.github.com/ThiagoTGM/Forester</url>
+                    <url>https://maven.pkg.github.com/tmarback/Forester</url>
                 </repository>
             </distributionManagement>
         </profile>
