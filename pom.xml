@@ -11,7 +11,7 @@
 
     <name>Forester</name>
     <description>Library for direct-mapped and hierarchical persistent storage that can be backed by a mix of database services.</description>
-    <url>https://github.com/tmarback/forester</url>
+    <url>https://forester.sympho.dev</url>
 
     <licenses>
         <license>
@@ -370,7 +370,7 @@
                                 </goals>
                                 <configuration>
                                     <!-- GPG key used for signing -->
-                                    <keyname>EBFC3E703FB98362416FEB47FA65DCF027FC2617</keyname>
+                                    <keyname>CD34764122071990B693DF58BD6FE3DF9898F9B3</keyname>
                                     <!-- Prevent `gpg` from using pinentry programs -->
                                     <gpgArguments>
                                         <arg>--pinentry-mode</arg>
