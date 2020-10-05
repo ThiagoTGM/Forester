@@ -1,4 +1,4 @@
-package com.github.thiagotgm.forester;
+package dev.sympho.forester;
 
 /**
  * Hello world!

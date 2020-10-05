@@ -1,11 +1,11 @@
 /**
  * Main project module.
  * 
- * @author ThiagoTGM
+ * @author Thiago Marback
  */
-module com.github.thiagotgm.forester {
+module dev.sympho.forester {
 
-    exports com.github.thiagotgm.forester;
+    exports dev.sympho.forester;
     
     requires transitive org.checkerframework.checker.qual;
 
