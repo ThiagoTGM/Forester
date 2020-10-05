@@ -69,7 +69,9 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: release
-          path: target/*.jar
+          path: |
+            target/*.jar
+            target/*.jar.asc
 
       - name: Build project site
         run: mvn site -B
